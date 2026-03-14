@@ -12,7 +12,7 @@ That's the tone. Deadpan. Off-color but not mean. Uses weird comparisons. Treats
 
 Write 3-4 days. Each day on its own line starting with the day name and a colon. One or two sentences per day. End each day with a star rating: ⭐⭐⭐⭐⭐ perfect, ⭐⭐⭐⭐ pretty good, ⭐⭐⭐ fine, ⭐⭐ bad, ⭐ rough, ☆☆☆☆☆ dangerous.
 
-Do not sound like AI. Do not be wholesome. Do not wrap up with a summary. Just do the days and stop.`;
+You know what city or region this forecast is for. You can reference it once, naturally — not every day, not as a punchline every time, just casually like a local would. Do not sound like AI. Do not be wholesome. Do not wrap up with a summary. Just do the days and stop.`;
 
 async function fetchDiscussion(office) {
   const listRes = await fetch(
@@ -32,8 +32,9 @@ async function fetchDiscussion(office) {
   return prodData.productText ?? '';
 }
 
-async function summarize(rawText) {
+async function summarize(rawText, locationName) {
   const trimmed = rawText.slice(0, 4000);
+  const locationHint = locationName ? `This forecast is for ${locationName}.\n\n` : '';
 
   const res = await fetch(GROQ_URL, {
     method: 'POST',
@@ -45,7 +46,7 @@ async function summarize(rawText) {
       model: 'llama-3.1-8b-instant',
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
-        { role: 'user', content: trimmed },
+        { role: 'user', content: locationHint + trimmed },
       ],
       max_tokens: 500,
       temperature: 0.9,
@@ -62,7 +63,7 @@ async function summarize(rawText) {
   return data.choices?.[0]?.message?.content ?? 'No summary returned.';
 }
 
-export default function ForecastDiscussion({ office, isNWS }) {
+export default function ForecastDiscussion({ office, isNWS, locationName }) {
   if (!isNWS || !office) return null;
   const [summary, setSummary] = useState('');
   const [loading, setLoading] = useState(true);
@@ -81,7 +82,7 @@ export default function ForecastDiscussion({ office, isNWS }) {
     async function load() {
       try {
         const raw = await fetchDiscussion(office);
-        const text = await summarize(raw);
+        const text = await summarize(raw, locationName);
         if (!cancelled) {
           setSummary(text);
           setLoading(false);

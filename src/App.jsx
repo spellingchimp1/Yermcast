@@ -78,7 +78,7 @@ export default function App() {
             <HourlyForecast hourly={weather.hourly} />
             <WeeklyForecast weekly={weather.weekly} />
             <RadarMap coords={weather.coords} />
-            <ForecastDiscussion office={weather.office} isNWS={weather.isNWS} />
+            <ForecastDiscussion office={weather.office} isNWS={weather.isNWS} locationName={locationName} />
           </>
         )}
 
