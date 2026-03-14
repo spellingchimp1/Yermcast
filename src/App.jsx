@@ -78,7 +78,7 @@ export default function App() {
             <HourlyForecast hourly={weather.hourly} />
             <WeeklyForecast weekly={weather.weekly} />
             <RadarMap coords={weather.coords} />
-            <ForecastDiscussion office={weather.office} />
+            <ForecastDiscussion office={weather.office} isNWS={weather.isNWS} />
           </>
         )}
 
@@ -99,7 +99,11 @@ export default function App() {
       </div>
 
       <footer className="footer">
-        Data from <strong>National Weather Service</strong>
+        Data from{' '}
+        {weather?.isNWS === false
+          ? <strong>Open-Meteo</strong>
+          : <strong>National Weather Service</strong>
+        }
       </footer>
     </div>
   );

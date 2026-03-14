@@ -64,7 +64,8 @@ async function summarize(rawText) {
   return data.choices?.[0]?.message?.content ?? 'No summary returned.';
 }
 
-export default function ForecastDiscussion({ office }) {
+export default function ForecastDiscussion({ office, isNWS }) {
+  if (!isNWS || !office) return null;
   const [summary, setSummary] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
