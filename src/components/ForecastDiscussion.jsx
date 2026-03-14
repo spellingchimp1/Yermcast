@@ -4,15 +4,15 @@ const GROQ_KEY = import.meta.env.VITE_GROQ_KEY;
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const NWS_HEADERS = { 'User-Agent': 'WeatherApp (contact@example.com)' };
 
-const SYSTEM_PROMPT = `Write a short, punchy 3-4 day weather forecast. Short sentences. Real conditions, real temps. Occasionally throw in something unexpected, absurd, or deadpan — but keep it brief. Don't explain the joke. Don't over-write.
+const SYSTEM_PROMPT = `Write a 3-4 day weather forecast. Use the real temps and conditions. Keep it short — one or two sentences per day. Write like a person, not a weather app. Use unexpected, slightly absurd comparisons sometimes. Fun, not dark. Sarcastic when it fits, but not mean.
 
-Here's the vibe to match (don't copy these, just get the energy right):
-"Today's warmer than yesterday, so slap on some sunscreen — cancer waits for no one. Tomorrow gets wetter than a motivational speaker's handshake, highs around 64. Thursday clears out but drops to the mid-30s, so dig out something with sleeves."
+The style to match — write like THIS (don't copy it, just get the energy):
+"Today is going to be warmer than yesterday, so slap on some sunscreen. Tomorrow is going to be wetter than a golden retriever at a pool party, highs around 64. Thursday brings snow, so put on the wool pantalones and accept your fate."
 
-Format: Each day on its own line. Day name, 1-2 SHORT sentences max, star rating at the end.
+Format: Each day on its own line. Day name first, 1-2 sentences, star rating at the end of the line.
 Star ratings: ⭐⭐⭐⭐⭐ perfect, ⭐⭐⭐⭐ pretty good, ⭐⭐⭐ fine, ⭐⭐ bad, ⭐ rough, ☆☆☆☆☆ stay home.
 
-No preamble. No summary. No long explanations. Just start with the first day.`;
+No intro. No outro. Just the days.`;
 
 async function fetchDiscussion(office) {
   const listRes = await fetch(
