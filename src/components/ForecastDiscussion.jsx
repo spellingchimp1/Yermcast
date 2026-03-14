@@ -15,14 +15,11 @@ Stars: ⭐⭐⭐⭐⭐ perfect · ⭐⭐⭐⭐ solid · ⭐⭐⭐ fine · ⭐⭐
 
 const FEW_SHOT_INPUT = `This forecast is for Asheville, NC.
 
-FORECAST DATA (use this as your primary source):
-Saturday: High 71°F, Low 43°F, Sunny, Wind 2 to 8 mph
-Sunday: High 64°F, Low 50°F, Partly Sunny then Chance Rain Showers, Wind 6 to 14 mph
-Monday: High 61°F, Low 18°F, Rain Showers, Wind 16 mph
-Tuesday: High 36°F, Low 18°F, Mostly Sunny, Wind 14 to 17 mph
-
-Additional meteorologist context below — use for background only:
-(Area Forecast Discussion text)`;
+FORECAST DATA — base your forecast on this:
+Saturday, High 71°F, Low 43°F, Sunny, Wind 2 to 8 mph
+Sunday, High 64°F, Low 50°F, Partly Sunny then Chance Rain Showers, Wind 6 to 14 mph
+Monday, High 61°F, Low 18°F, Rain Showers, Wind 16 mph
+Tuesday, High 36°F, Low 18°F, Mostly Sunny, Wind 14 to 17 mph`;
 
 const FEW_SHOT_OUTPUT = `Saturday: 71 and sunny with barely any wind — genuinely can't complain. Go outside. ⭐⭐⭐⭐⭐
 
@@ -55,10 +52,9 @@ async function summarize(rawText, locationName, weekly) {
   const locationHint = locationName ? `This forecast is for ${locationName}.\n\n` : '';
 
   let forecastData = '';
+  let afdContext = trimmed;
   if (weekly && weekly.length) {
-    // Get daytime periods only (isDaytime true, or every other starting at 0 for Open-Meteo)
     const dayPeriods = weekly.filter(d => d.isDaytime !== false);
-    // Pair with night periods for lows
     const nightPeriods = weekly.filter(d => d.isDaytime === false);
     const days = dayPeriods.slice(0, 4).map((d, i) => {
       const night = nightPeriods[i];
@@ -68,11 +64,12 @@ async function summarize(rawText, locationName, weekly) {
       if (night) parts.push(`Low ${night.temperature}°F`);
       if (d.shortForecast) parts.push(d.shortForecast);
       const precip = d.probabilityOfPrecipitation?.value;
-      if (precip != null) parts.push(`${precip}% precip`);
+      if (precip != null && precip > 0) parts.push(`${precip}% chance of precip`);
       if (d.windSpeed) parts.push(`Wind ${d.windSpeed}`);
       return parts.join(', ');
     });
-    forecastData = `FORECAST DATA — base your forecast on this:\n${days.join('\n')}\n\nStar guide: 70s sunny = 5, 80s = 4, cloudy = 3, rain = 2, storms/snow = 1, dangerous = 0.\n\nIgnore the raw text below, it's just background context:\n`;
+    forecastData = `FORECAST DATA — base your forecast on this:\n${days.join('\n')}`;
+    afdContext = ''; // don't pass raw AFD — structured data is enough
   }
 
   const res = await fetch(GROQ_URL, {
@@ -84,7 +81,7 @@ async function summarize(rawText, locationName, weekly) {
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: FEW_SHOT_INPUT },
         { role: 'assistant', content: FEW_SHOT_OUTPUT },
-        { role: 'user', content: locationHint + forecastData + trimmed },
+        { role: 'user', content: locationHint + forecastData + (afdContext ? '\n\n' + afdContext : '') },
       ],
       max_tokens: 500,
       temperature: 0.9,
