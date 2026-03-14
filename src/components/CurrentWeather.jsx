@@ -23,6 +23,7 @@ export default function CurrentWeather({
     ? Math.round((displayed.heatIndex.value * 9) / 5 + 32)
     : null;
   const humidity = displayed.relativeHumidity?.value;
+  const precip = displayed.probabilityOfPrecipitation?.value;
   const emoji = getWeatherEmoji(displayed.shortForecast);
   const yermImg = getYermCastImage(displayed.shortForecast, temp, displayed.isDaytime !== false);
   const isNow = hourIdx === 0;
@@ -116,7 +117,10 @@ export default function CurrentWeather({
           <div className="stat-value">{displayed.windSpeed}</div>
           <div className="stat-sub">{displayed.windDirection}</div>
         </div>
-
+        <div className="stat-card">
+          <div className="stat-label">Precip</div>
+          <div className="stat-value">{precip != null ? `${precip}%` : '--'}</div>
+        </div>
       </div>
     </div>
   );

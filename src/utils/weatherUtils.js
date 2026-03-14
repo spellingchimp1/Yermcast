@@ -69,12 +69,13 @@ export function getTimeOfDayGradient() {
 }
 
 export function tempColor(temp) {
-  if (temp >= 90) return '#ff4422';
-  if (temp >= 80) return '#ff8800';
-  if (temp >= 70) return '#ffaa00';
-  if (temp >= 60) return '#ffcc44';
-  if (temp >= 50) return '#88cc44';
-  if (temp >= 40) return '#44aacc';
-  if (temp >= 32) return '#44aaee';
-  return '#88bbff';
+  if (temp >= 100) return '#cc2200';
+  if (temp >= 90)  return '#ff4422';
+  if (temp >= 80)  return '#ff8800';
+  if (temp >= 70)  return '#ffaa00';
+  if (temp >= 60)  return '#ffcc44';
+  if (temp >= 50)  return '#44ccaa';
+  if (temp >= 40)  return '#44aacc';
+  if (temp >= 32)  return '#4488ee';
+  return '#8866cc';
 }
