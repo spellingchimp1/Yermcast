@@ -55,7 +55,21 @@ export default function App() {
           <div className="error">
             <div className="error-icon">⚠️</div>
             <p>{error}</p>
-            <button className="retry-btn" onClick={() => setQuery(query)}>Try again</button>
+            <button className="retry-btn" onClick={startEditing}>Change Location</button>
+          </div>
+        )}
+
+        {error && editing && (
+          <div className="location-edit-overlay">
+            <input
+              className="location-input"
+              autoFocus
+              placeholder="City or zip code…"
+              value={inputVal}
+              onChange={(e) => setInputVal(e.target.value)}
+              onBlur={commitEdit}
+              onKeyDown={handleKeyDown}
+            />
           </div>
         )}
 
