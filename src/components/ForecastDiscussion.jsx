@@ -4,19 +4,27 @@ const GROQ_KEY = import.meta.env.VITE_GROQ_KEY;
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const NWS_HEADERS = { 'User-Agent': 'WeatherApp (contact@example.com)' };
 
-const SYSTEM_PROMPT = `Write a 3-4 day weather forecast. Short, casual, like a person — not a weather app. Star rating at the end of each line. Most days are straight forecast; only add a comment when something genuinely earns it.
-Star ratings: ⭐⭐⭐⭐⭐ perfect, ⭐⭐⭐⭐ pretty good, ⭐⭐⭐ fine, ⭐⭐ bad, ⭐ rough, ☆☆☆☆☆ stay home.`;
+const SYSTEM_PROMPT = `You're giving a casual weather forecast to a friend. Use the real data. Keep each day to 1-2 sentences. You have a dry sense of humor — think Jon Stewart delivering the news. You're genuinely informative, but you react to the weather like a real person would. Some days are just straight. Some days earn a comment. Never force it. Never repeat the same kind of joke twice. End each day with a star rating after the period.
+Stars: ⭐⭐⭐⭐⭐ perfect · ⭐⭐⭐⭐ solid · ⭐⭐⭐ fine · ⭐⭐ not great · ⭐ rough · ☆☆☆☆☆ stay home`;
 
-const FEW_SHOT_INPUT = `FORECAST DATA:
-Monday: High 74°F, Low 55°F, Sunny, 0% precip, Wind 5 mph
-Tuesday: High 61°F, Low 48°F, Rain Showers, 80% precip, Wind 12 mph
-Wednesday: High 52°F, Low 40°F, Mostly Cloudy, 30% precip, Wind 20 mph
-Thursday: High 34°F, Low 22°F, Snow Likely, 70% precip, Wind 15 mph`;
+const FEW_SHOT_INPUT = `This forecast is for Asheville, NC.
 
-const FEW_SHOT_OUTPUT = `Monday: Highs near 74, sunny all day. ⭐⭐⭐⭐⭐
-Tuesday: Rain moves in, highs around 61 and winds picking up to 12 mph — not the worst day ever, just close. ⭐⭐
-Wednesday: Cloudy and raw, highs in the low 50s with some wind. Fine if you like that sort of thing. ⭐⭐
-Thursday: Snow likely, highs near 34. Dig out the wool pantalones. ⭐`;
+FORECAST DATA (use this as your primary source):
+Saturday: High 71°F, Low 43°F, Sunny, Wind 2 to 8 mph
+Sunday: High 64°F, Low 50°F, Partly Sunny then Chance Rain Showers, Wind 6 to 14 mph
+Monday: High 61°F, Low 18°F, Rain Showers, Wind 16 mph
+Tuesday: High 36°F, Low 18°F, Mostly Sunny, Wind 14 to 17 mph
+
+Additional meteorologist context below — use for background only:
+(Area Forecast Discussion text)`;
+
+const FEW_SHOT_OUTPUT = `Saturday: 71 and sunny with barely any wind — genuinely can't complain. Go outside. ⭐⭐⭐⭐⭐
+
+Sunday: Starts nice, partly sunny around 64, but rain's probably showing up by afternoon because nothing good lasts. ⭐⭐⭐
+
+Monday: Rain, 61 dropping to 18 overnight, windy. That's a 43-degree temperature swing in one day, which feels personal. ⭐
+
+Tuesday: The rain's gone but now it's 36 and windy. Asheville said "pick a struggle." ⭐⭐`;
 
 async function fetchDiscussion(office) {
   const listRes = await fetch(
