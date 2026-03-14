@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 
-const GROQ_KEY = import.meta.env.VITE_GROQ_KEY;
-const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const GEMINI_KEY = import.meta.env.VITE_GEMINI_KEY;
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
 const NWS_HEADERS = { 'User-Agent': 'WeatherApp (contact@example.com)' };
 
 const SYSTEM_PROMPT = `You're giving a casual weather forecast to a friend. Use the real data. Keep each day to 1-2 sentences. You have a dry sense of humor — think Jon Stewart delivering the news. React to what's actually weird or notable about the specific numbers and conditions. Some days are just straight. Some days earn a comment — dry, dark, sarcastic, whatever fits.
@@ -75,22 +75,17 @@ async function summarize(rawText, locationName, weekly) {
     forecastData = `FORECAST DATA — base your forecast on this:\n${days.join('\n')}\n\nStar guide: 70s sunny = 5, 80s = 4, cloudy = 3, rain = 2, storms/snow = 1, dangerous = 0.\n\nIgnore the raw text below, it's just background context:\n`;
   }
 
-  const res = await fetch(GROQ_URL, {
+  const res = await fetch(GEMINI_URL, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${GROQ_KEY}`,
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
-      messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
-        { role: 'user', content: FEW_SHOT_INPUT },
-        { role: 'assistant', content: FEW_SHOT_OUTPUT },
-        { role: 'user', content: locationHint + forecastData + trimmed },
+      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+      contents: [
+        { role: 'user', parts: [{ text: FEW_SHOT_INPUT }] },
+        { role: 'model', parts: [{ text: FEW_SHOT_OUTPUT }] },
+        { role: 'user', parts: [{ text: locationHint + forecastData + trimmed }] },
       ],
-      max_tokens: 500,
-      temperature: 0.9,
+      generationConfig: { temperature: 0.9, maxOutputTokens: 500 },
     }),
   });
 
@@ -101,7 +96,7 @@ async function summarize(rawText, locationName, weekly) {
   }
 
   const data = await res.json();
-  return data.choices?.[0]?.message?.content ?? 'No summary returned.';
+  return data.candidates?.[0]?.content?.parts?.[0]?.text ?? 'No summary returned.';
 }
 
 export default function ForecastDiscussion({ office, isNWS, locationName, weekly }) {
