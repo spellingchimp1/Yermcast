@@ -85,14 +85,13 @@ async function summarize(rawText, locationName, weekly) {
 }
 
 export default function ForecastDiscussion({ office, isNWS, locationName, weekly }) {
-  if (!isNWS || !office) return null;
   const [summary, setSummary] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const prevOffice = useRef(null);
 
   useEffect(() => {
-    if (!office || office === prevOffice.current) return;
+    if (!isNWS || !office || office === prevOffice.current) return;
     prevOffice.current = office;
 
     let cancelled = false;
@@ -118,7 +117,9 @@ export default function ForecastDiscussion({ office, isNWS, locationName, weekly
 
     load();
     return () => { cancelled = true; };
-  }, [office]);
+  }, [office, isNWS]);
+
+  if (!isNWS || !office) return null;
 
   return (
     <div className="section">
