@@ -9,7 +9,10 @@ const SYSTEM_PROMPT = `Write a 3-4 day weather forecast. Use the real temps and 
 The style to match — write like THIS (don't copy it, just get the energy):
 "Today is going to be warmer than yesterday, so slap on some sunscreen. Tomorrow is going to be wetter than a golden retriever at a pool party, highs around 64. Thursday brings snow, so put on the wool pantalones and accept your fate."
 
-Format: Each day on its own line. Day name first, 1-2 sentences, star rating at the end of the line.
+Format: Each day on its own line like this:
+Saturday: [forecast sentence(s).] ⭐⭐⭐
+
+The star rating always goes at the very end, after the period. Never in the middle of a sentence.
 Star ratings: ⭐⭐⭐⭐⭐ perfect, ⭐⭐⭐⭐ pretty good, ⭐⭐⭐ fine, ⭐⭐ bad, ⭐ rough, ☆☆☆☆☆ stay home.
 
 No intro. No outro. Just the days.`;
