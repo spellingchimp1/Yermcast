@@ -32,9 +32,30 @@ async function fetchDiscussion(office) {
   return prodData.productText ?? '';
 }
 
-async function summarize(rawText, locationName) {
+async function summarize(rawText, locationName, weekly) {
   const trimmed = rawText.slice(0, 4000);
   const locationHint = locationName ? `This forecast is for ${locationName}.\n\n` : '';
+
+  let forecastData = '';
+  if (weekly && weekly.length) {
+    // Get daytime periods only (isDaytime true, or every other starting at 0 for Open-Meteo)
+    const dayPeriods = weekly.filter(d => d.isDaytime !== false);
+    // Pair with night periods for lows
+    const nightPeriods = weekly.filter(d => d.isDaytime === false);
+    const days = dayPeriods.slice(0, 4).map((d, i) => {
+      const night = nightPeriods[i];
+      const parts = [];
+      if (d.name) parts.push(d.name);
+      parts.push(`High ${d.temperature}°F`);
+      if (night) parts.push(`Low ${night.temperature}°F`);
+      if (d.shortForecast) parts.push(d.shortForecast);
+      const precip = d.probabilityOfPrecipitation?.value;
+      if (precip != null) parts.push(`${precip}% precip`);
+      if (d.windSpeed) parts.push(`Wind ${d.windSpeed}`);
+      return parts.join(', ');
+    });
+    forecastData = `Actual forecast data — use these numbers to assign star ratings accurately:\n${days.join('\n')}\n\nStar guide: 70s sunny = 5 stars, 80s humid = 3, 90s+ = 2, rain = 2-3, storms/snow = 1, dangerous = 0.\n\n`;
+  }
 
   const res = await fetch(GROQ_URL, {
     method: 'POST',
@@ -46,7 +67,7 @@ async function summarize(rawText, locationName) {
       model: 'llama-3.1-8b-instant',
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
-        { role: 'user', content: locationHint + trimmed },
+        { role: 'user', content: locationHint + forecastData + trimmed },
       ],
       max_tokens: 500,
       temperature: 0.9,
@@ -63,7 +84,7 @@ async function summarize(rawText, locationName) {
   return data.choices?.[0]?.message?.content ?? 'No summary returned.';
 }
 
-export default function ForecastDiscussion({ office, isNWS, locationName }) {
+export default function ForecastDiscussion({ office, isNWS, locationName, weekly }) {
   if (!isNWS || !office) return null;
   const [summary, setSummary] = useState('');
   const [loading, setLoading] = useState(true);
@@ -82,7 +103,7 @@ export default function ForecastDiscussion({ office, isNWS, locationName }) {
     async function load() {
       try {
         const raw = await fetchDiscussion(office);
-        const text = await summarize(raw, locationName);
+        const text = await summarize(raw, locationName, weekly);
         if (!cancelled) {
           setSummary(text);
           setLoading(false);
