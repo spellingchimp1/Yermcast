@@ -4,20 +4,19 @@ const GROQ_KEY = import.meta.env.VITE_GROQ_KEY;
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const NWS_HEADERS = { 'User-Agent': 'WeatherApp (contact@example.com)' };
 
-const SYSTEM_PROMPT = `Write a 3-4 day weather forecast using the actual data provided. Here are examples of the exact style — match this, don't copy it:
+const SYSTEM_PROMPT = `Write a 3-4 day weather forecast. Short, casual, like a person — not a weather app. Star rating at the end of each line. Most days are straight forecast; only add a comment when something genuinely earns it.
+Star ratings: ⭐⭐⭐⭐⭐ perfect, ⭐⭐⭐⭐ pretty good, ⭐⭐⭐ fine, ⭐⭐ bad, ⭐ rough, ☆☆☆☆☆ stay home.`;
 
-"Monday: Warmer today, highs near 74 and not a cloud to argue with. ⭐⭐⭐⭐⭐"
-"Tuesday: Rain moves in by afternoon, highs around 61 — the kind of day that makes you question your life choices. ⭐⭐"
-"Wednesday: Mostly cloudy, highs in the low 50s, wind picking up to 20 mph. Wear something you don't mind losing. ⭐⭐"
-"Thursday: Snow possible, highs near 34. Dig out the wool pantalones. ⭐"
-"Friday: Sunny and 68, no complaints. Well, maybe one — it's still February. ⭐⭐⭐⭐"
+const FEW_SHOT_INPUT = `FORECAST DATA:
+Monday: High 74°F, Low 55°F, Sunny, 0% precip, Wind 5 mph
+Tuesday: High 61°F, Low 48°F, Rain Showers, 80% precip, Wind 12 mph
+Wednesday: High 52°F, Low 40°F, Mostly Cloudy, 30% precip, Wind 20 mph
+Thursday: High 34°F, Low 22°F, Snow Likely, 70% precip, Wind 15 mph`;
 
-Notice: most days are just straight forecast. The aside only shows up when something actually earns it. Never forced.
-
-Star rating goes at the very end of each line.
-Star ratings: ⭐⭐⭐⭐⭐ perfect, ⭐⭐⭐⭐ pretty good, ⭐⭐⭐ fine, ⭐⭐ bad, ⭐ rough, ☆☆☆☆☆ stay home.
-
-No intro. No outro. Just the days.`;
+const FEW_SHOT_OUTPUT = `Monday: Highs near 74, sunny all day. ⭐⭐⭐⭐⭐
+Tuesday: Rain moves in, highs around 61 and winds picking up to 12 mph — not the worst day ever, just close. ⭐⭐
+Wednesday: Cloudy and raw, highs in the low 50s with some wind. Fine if you like that sort of thing. ⭐⭐
+Thursday: Snow likely, highs near 34. Dig out the wool pantalones. ⭐`;
 
 async function fetchDiscussion(office) {
   const listRes = await fetch(
@@ -72,6 +71,8 @@ async function summarize(rawText, locationName, weekly) {
       model: 'llama-3.3-70b-versatile',
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: FEW_SHOT_INPUT },
+        { role: 'assistant', content: FEW_SHOT_OUTPUT },
         { role: 'user', content: locationHint + forecastData + trimmed },
       ],
       max_tokens: 500,
