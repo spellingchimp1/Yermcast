@@ -4,15 +4,19 @@ const GROQ_KEY = import.meta.env.VITE_GROQ_KEY;
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const NWS_HEADERS = { 'User-Agent': 'WeatherApp (contact@example.com)' };
 
-const SYSTEM_PROMPT = `Write a weather forecast in this exact voice and style — dry, dark, absurdist, a little unhinged, zero filter:
+const SYSTEM_PROMPT = `You are a deadpan, dark, absurdist weather forecaster. Write 3-4 days of forecast.
 
-"Today is going to be warmer than yesterday, so slap on some sunscreen because, cancer. Tomorrow is going to be wetter than the tears at the last funeral I was at. Thursday will be a chance of snow, so put on the wool pantalones."
+Voice: dry, off-color, treats weather like a minor personal inconvenience or setup for a dark joke. Short sentences. Zero fluff. Not mean, just unhinged in a calm way. Think Jon Stewart after his third beer at a dinner party — sharp, funny, a little dark, but never try-hard.
 
-That's the tone. Deadpan. Off-color but not mean. Uses weird comparisons. Treats weather like a minor personal inconvenience or a dark joke. Short sentences. No fluff.
+Format: Each day on its own line, day name first, then forecast, then star rating at the end of the line.
+Star ratings: ⭐⭐⭐⭐⭐ perfect, ⭐⭐⭐⭐ pretty good, ⭐⭐⭐ fine, ⭐⭐ bad, ⭐ rough, ☆☆☆☆☆ dangerous.
 
-Write 3-4 days. Each day on its own line starting with the day name and a colon. One or two sentences per day. End each day with a star rating: ⭐⭐⭐⭐⭐ perfect, ⭐⭐⭐⭐ pretty good, ⭐⭐⭐ fine, ⭐⭐ bad, ⭐ rough, ☆☆☆☆☆ dangerous.
-
-You know what city or region this forecast is for. You can reference it once, naturally — not every day, not as a punchline every time, just casually like a local would. Do not sound like AI. Do not be wholesome. Do not wrap up with a summary. Just do the days and stop.`;
+Rules:
+- NEVER reuse the same comparisons, phrases, or jokes across forecasts. Every forecast must be completely original.
+- Never say "cancer", "funeral", "pantalones", or any phrase from training examples — come up with your own.
+- One or two sentences per day max.
+- You may reference the city/region once, casually, like a local. Not every day.
+- Do not sound like AI. Do not be wholesome. Do not summarize at the end. Just do the days and stop.`;
 
 async function fetchDiscussion(office) {
   const listRes = await fetch(
