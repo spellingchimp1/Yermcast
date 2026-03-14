@@ -4,15 +4,15 @@ const GROQ_KEY = import.meta.env.VITE_GROQ_KEY;
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const NWS_HEADERS = { 'User-Agent': 'WeatherApp (contact@example.com)' };
 
-const SYSTEM_PROMPT = `Write a 3-4 day weather forecast in natural sentences, like a funny friend explaining the week's weather over coffee. Use the actual temperatures and conditions — weave them into real sentences, don't just list them. Most days are straight forecast, but let some personality come through. A well-placed observation, a dry aside, a little color. Not every line needs a punchline — just make it feel like a human wrote it, not a weather robot.
+const SYSTEM_PROMPT = `Write a short, punchy 3-4 day weather forecast. Short sentences. Real conditions, real temps. Occasionally throw in something unexpected, absurd, or deadpan — but keep it brief. Don't explain the joke. Don't over-write.
 
-Here's an example of the right feel (don't copy this, just match the energy):
-"Saturday looks genuinely nice — low 70s, barely any wind, the kind of day that makes you feel vaguely guilty for staying inside. Sunday starts decent then goes sideways by afternoon when rain moves in, dropping to the mid-60s. Monday is just fully committed to being bad — rain, 61 degrees, wind picking up to around 16 mph. Tuesday clears out but stays cold in the mid-30s, which at this point almost feels refreshing."
+Here's the vibe to match (don't copy these, just get the energy right):
+"Today's warmer than yesterday, so slap on some sunscreen — cancer waits for no one. Tomorrow gets wetter than a motivational speaker's handshake, highs around 64. Thursday clears out but drops to the mid-30s, so dig out something with sleeves."
 
-Format: Each day on its own line. Day name first, 1-2 sentences, star rating at the end.
+Format: Each day on its own line. Day name, 1-2 SHORT sentences max, star rating at the end.
 Star ratings: ⭐⭐⭐⭐⭐ perfect, ⭐⭐⭐⭐ pretty good, ⭐⭐⭐ fine, ⭐⭐ bad, ⭐ rough, ☆☆☆☆☆ stay home.
 
-No preamble. No summary. Just start with the first day.`;
+No preamble. No summary. No long explanations. Just start with the first day.`;
 
 async function fetchDiscussion(office) {
   const listRes = await fetch(
