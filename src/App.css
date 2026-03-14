@@ -1,0 +1,629 @@
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── App shell ── */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 16px 64px;
+  background: linear-gradient(180deg, #1b4f8a 0%, #163d72 35%, #0f2a52 70%, #0a1e3d 100%);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── App title ── */
+.app-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 16px;
+}
+
+/* ── Main card ── */
+.card {
+  width: 100%;
+  max-width: 390px;
+}
+
+/* ── Loading / Error ── */
+.loading, .error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  gap: 12px;
+  color: rgba(255,255,255,0.85);
+  font-size: 16px;
+  font-weight: 500;
+}
+.loading-icon, .error-icon { font-size: 48px; }
+.loading .loading-icon {
+  animation: fade-pulse 1.6s ease-in-out infinite;
+}
+@keyframes fade-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* ── Current weather ── */
+.current-section {
+  padding: 8px 0 24px;
+  color: #fff;
+  text-align: center;
+}
+
+/* Location name — clickable button */
+.location-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: #fff;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 10px;
+  font-family: inherit;
+  transition: background 0.15s;
+  margin-bottom: 4px;
+}
+.location-name:hover { background: rgba(255,255,255,0.1); }
+.location-edit-hint {
+  font-size: 20px;
+  opacity: 0.45;
+  font-weight: 300;
+  margin-left: 2px;
+}
+
+/* Location text input */
+.location-input {
+  display: block;
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto 4px;
+  padding: 8px 16px;
+  font-size: 20px;
+  font-weight: 500;
+  font-family: inherit;
+  color: #fff;
+  background: rgba(255,255,255,0.15);
+  border: 1.5px solid rgba(255,255,255,0.35);
+  border-radius: 14px;
+  outline: none;
+  text-align: center;
+}
+.location-input::placeholder { color: rgba(255,255,255,0.4); }
+.location-input:focus { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.6); }
+
+/* ── Alert banner ── */
+.alert-wrap {
+  margin: 8px auto 0;
+  width: 100%;
+  text-align: center;
+}
+.alert-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  background: none;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+.alert-banner:hover { opacity: 0.85; }
+.alert-icon { font-size: 14px; line-height: 1; }
+.alert-event { text-transform: uppercase; letter-spacing: 0.06em; font-size: 12px; }
+.alert-chevron {
+  font-size: 18px;
+  font-weight: 300;
+  opacity: 0.7;
+  transition: transform 0.2s;
+  line-height: 1;
+}
+.alert-detail {
+  margin-top: 8px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid;
+  background: rgba(0,0,0,0.25);
+  text-align: left;
+  animation: slide-down 0.2s ease;
+}
+.alert-headline {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+.alert-description {
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.75);
+  white-space: pre-wrap;
+  max-height: 260px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.alert-description::-webkit-scrollbar { display: none; }
+
+/* Weather icon */
+.current-icon {
+  font-size: 72px;
+  line-height: 1;
+  margin: 8px 0 0;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
+}
+
+.current-yerm-img {
+  display: block;
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  margin: 8px auto 0;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+}
+
+.current-temp {
+  font-size: 96px;
+  font-weight: 200;
+  letter-spacing: -4px;
+  line-height: 1;
+  color: #fff;
+  margin: 4px 0 6px;
+}
+
+.condition-text {
+  font-size: 20px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 4px;
+}
+
+.temp-range {
+  font-size: 17px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.75);
+  letter-spacing: 0.2px;
+}
+
+/* Error retry button */
+.retry-btn {
+  margin-top: 4px;
+  padding: 8px 20px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  color: #fff;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+}
+.retry-btn:hover { background: rgba(255,255,255,0.22); }
+
+/* ── Time slider ── */
+.time-slider-wrap {
+  margin: 16px 0 4px;
+  padding: 0 4px;
+}
+
+.time-slider {
+  width: 100%;
+  accent-color: rgba(255,255,255,0.8);
+  cursor: pointer;
+  height: 4px;
+}
+
+.time-slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.time-label {
+  color: rgba(255,255,255,0.6) !important;
+  font-size: 15px !important;
+}
+
+/* ── Stat cards ── */
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.yermcast-card {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 12px 8px;
+}
+
+.yermcast-img {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  margin-top: 2px;
+}
+
+.stat-card {
+  background: rgba(255,255,255,0.12);
+  border-radius: 16px;
+  padding: 14px 12px 16px;
+  text-align: left;
+}
+
+.stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.55);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: 500;
+  color: #fff;
+  line-height: 1;
+}
+
+.stat-sub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.55);
+  margin-top: 4px;
+}
+
+/* ── Section container ── */
+.section {
+  border-top: 1px solid rgba(255,255,255,0.12);
+  padding: 18px 0 4px;
+  color: #fff;
+}
+
+.section-title {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 14px;
+}
+
+/* ── Hourly forecast ── */
+.hourly-scroll {
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+  margin: 0 -4px;
+}
+.hourly-scroll::-webkit-scrollbar { display: none; }
+
+.hourly-bars {
+  display: flex;
+  gap: 4px;
+  align-items: flex-end;
+  min-width: max-content;
+  padding: 0 4px;
+}
+
+.hour-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 60px;
+}
+
+.hour-temp {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.bar-wrap {
+  display: flex;
+  align-items: flex-end;
+  height: 120px;
+}
+
+.bar {
+  width: 28px;
+  border-radius: 8px;
+  opacity: 0.9;
+}
+
+.hour-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.6);
+  white-space: nowrap;
+}
+
+.hour-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* ── Weekly forecast ── */
+.weekly-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.week-row {
+  display: grid;
+  grid-template-columns: 58px 28px 1fr 18px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  cursor: pointer;
+  color: #fff;
+  font-family: inherit;
+  width: 100%;
+  text-align: left;
+  transition: opacity 0.15s;
+}
+.week-row:last-of-type { border-bottom: none; }
+.week-row:active { opacity: 0.7; }
+
+.week-dayname {
+  font-size: 16px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.week-icon {
+  font-size: 22px;
+  text-align: center;
+  line-height: 1;
+}
+
+.week-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.week-low {
+  font-size: 15px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.5);
+  white-space: nowrap;
+  min-width: 28px;
+  text-align: right;
+}
+
+.week-high {
+  font-size: 15px;
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+  min-width: 28px;
+}
+
+.week-bar-track {
+  flex: 1;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.week-bar-fill {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: 3px;
+}
+
+.week-chevron {
+  font-size: 16px;
+  color: rgba(255,255,255,0.4);
+  transition: transform 0.2s;
+  line-height: 1;
+}
+.week-row.open .week-chevron {
+  transform: rotate(90deg);
+}
+
+/* ── Expanded day detail ── */
+.week-detail {
+  padding: 12px 0 16px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  animation: slide-down 0.2s ease;
+}
+.week-detail p {
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgba(255,255,255,0.8);
+}
+.week-night-detail {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.week-night-detail strong {
+  color: rgba(255,255,255,0.6);
+  font-weight: 600;
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Radar ── */
+.radar-container {
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+}
+
+.radar-map {
+  width: 100%;
+  height: 300px;
+  background: #0a1e3d;
+}
+
+/* Override Leaflet defaults to fit the dark theme */
+.radar-map .leaflet-control-zoom a {
+  background: rgba(255,255,255,0.12);
+  border: none;
+  color: #fff;
+  backdrop-filter: blur(8px);
+}
+.radar-map .leaflet-control-zoom a:hover {
+  background: rgba(255,255,255,0.22);
+}
+.radar-map .leaflet-control-zoom {
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.radar-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px 0;
+}
+
+.radar-play-btn {
+  background: rgba(255,255,255,0.12);
+  border: none;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  font-size: 14px;
+  color: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.radar-play-btn:hover { background: rgba(255,255,255,0.2); }
+
+.radar-time {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.55);
+  white-space: nowrap;
+  min-width: 52px;
+  text-align: right;
+}
+
+/* ── Forecast Discussion ── */
+.discussion-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  font-family: inherit;
+  padding: 0 0 14px;
+  transition: opacity 0.15s;
+}
+.discussion-toggle:disabled { cursor: default; }
+.discussion-toggle:not(:disabled):hover { opacity: 0.8; }
+
+.discussion-toggle-right {
+  display: flex;
+  align-items: center;
+}
+.discussion-chevron {
+  font-size: 18px;
+  color: rgba(255,255,255,0.4);
+  transition: transform 0.2s;
+}
+.discussion-toggle.open .discussion-chevron {
+  transform: rotate(90deg);
+}
+
+.discussion-card {
+  animation: slide-down 0.2s ease;
+  background: rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 18px;
+  min-height: 80px;
+}
+
+.discussion-text {
+  font-size: 15px;
+  line-height: 1.65;
+  color: rgba(255,255,255,0.88);
+  white-space: pre-wrap;
+}
+
+.discussion-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.5);
+}
+
+.discussion-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.2);
+  border-top-color: rgba(255,255,255,0.7);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.discussion-error {
+  font-size: 13px;
+  color: rgba(255,180,180,0.8);
+}
+
+/* ── Footer ── */
+.footer {
+  margin-top: 28px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+.footer strong { color: rgba(255,255,255,0.5); font-weight: 500; }
+
+/* ── Mobile ── */
+@media (max-width: 400px) {
+  .current-temp { font-size: 80px; }
+}
