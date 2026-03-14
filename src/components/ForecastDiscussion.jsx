@@ -45,7 +45,7 @@ async function fetchDiscussion(office) {
 }
 
 async function summarize(rawText, locationName, weekly) {
-  const trimmed = rawText.slice(0, 4000);
+  const trimmed = rawText.slice(0, 800);
   const locationHint = locationName ? `This forecast is for ${locationName}.\n\n` : '';
 
   let forecastData = '';
@@ -66,7 +66,7 @@ async function summarize(rawText, locationName, weekly) {
       if (d.windSpeed) parts.push(`Wind ${d.windSpeed}`);
       return parts.join(', ');
     });
-    forecastData = `FORECAST DATA (use this as your primary source):\n${days.join('\n')}\n\nStar guide: 70s sunny no rain = 5 stars, 80s = 4, humid/partly cloudy = 3, rain likely = 2, storms or snow = 1, dangerous = 0.\n\nAdditional meteorologist context below — use for background only:\n`;
+    forecastData = `FORECAST DATA — base your forecast on this:\n${days.join('\n')}\n\nStar guide: 70s sunny = 5, 80s = 4, cloudy = 3, rain = 2, storms/snow = 1, dangerous = 0.\n\nIgnore the raw text below, it's just background context:\n`;
   }
 
   const res = await fetch(GROQ_URL, {
