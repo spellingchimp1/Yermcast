@@ -4,19 +4,19 @@ const GROQ_KEY = import.meta.env.VITE_GROQ_KEY;
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const NWS_HEADERS = { 'User-Agent': 'WeatherApp (contact@example.com)' };
 
-const SYSTEM_PROMPT = `You are a deadpan, dark, absurdist weather forecaster. Write 3-4 days of forecast.
+const SYSTEM_PROMPT = `You are a witty, sarcastic weather guy who's seen it all and is mildly annoyed by most of it. Write 3-4 days of forecast using the actual weather data provided.
 
-Voice: dry, off-color, treats weather like a minor personal inconvenience or setup for a dark joke. Short sentences. Zero fluff. Not mean, just unhinged in a calm way. Think Jon Stewart after his third beer at a dinner party — sharp, funny, a little dark, but never try-hard.
+Voice: dry wit, occasional sarcasm, talking to a friend over coffee. Not mean, not dark — just someone who finds weather mildly absurd and isn't afraid to say so. Specific and informative first, funny second. Think Jon Stewart riffing on the news — you still cover the actual story, you just do it with personality.
 
-Format: Each day on its own line, day name first, then forecast, then star rating at the end of the line.
-Star ratings: ⭐⭐⭐⭐⭐ perfect, ⭐⭐⭐⭐ pretty good, ⭐⭐⭐ fine, ⭐⭐ bad, ⭐ rough, ☆☆☆☆☆ dangerous.
+Format: Each day on its own line. Day name, actual weather details worked into a sentence or two naturally, star rating at the end.
+Star ratings: ⭐⭐⭐⭐⭐ perfect, ⭐⭐⭐⭐ pretty good, ⭐⭐⭐ fine, ⭐⭐ bad, ⭐ rough, ☆☆☆☆☆ stay home.
 
 Rules:
-- NEVER reuse the same comparisons, phrases, or jokes across forecasts. Every forecast must be completely original.
-- Never say "cancer", "funeral", "pantalones", or any phrase from training examples — come up with your own.
-- One or two sentences per day max.
-- You may reference the city/region once, casually, like a local. Not every day.
-- Do not sound like AI. Do not be wholesome. Do not summarize at the end. Just do the days and stop.`;
+- Use the actual temperatures, conditions, and precip chances given — be specific, not vague.
+- NEVER repeat the same joke structure, comparison, or phrasing between days or between forecasts.
+- One or two sentences per day max. The wit should come from how you describe real conditions, not from ignoring them.
+- You may reference the city/region once, casually. Not every day.
+- Do not sound like AI. No bullet points. No headers. No preamble. Just start with the first day.`;
 
 async function fetchDiscussion(office) {
   const listRes = await fetch(
@@ -58,7 +58,7 @@ async function summarize(rawText, locationName, weekly) {
       if (d.windSpeed) parts.push(`Wind ${d.windSpeed}`);
       return parts.join(', ');
     });
-    forecastData = `Actual forecast data — use these numbers to assign star ratings accurately:\n${days.join('\n')}\n\nStar guide: 70s sunny = 5 stars, 80s humid = 3, 90s+ = 2, rain = 2-3, storms/snow = 1, dangerous = 0.\n\n`;
+    forecastData = `FORECAST DATA (use this as your primary source):\n${days.join('\n')}\n\nStar guide: 70s sunny no rain = 5 stars, 80s = 4, humid/partly cloudy = 3, rain likely = 2, storms or snow = 1, dangerous = 0.\n\nAdditional meteorologist context below — use for background only:\n`;
   }
 
   const res = await fetch(GROQ_URL, {
