@@ -572,6 +572,15 @@
   transform: rotate(90deg);
 }
 
+.star-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-bottom: 10px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+}
+
 .discussion-card {
   animation: slide-down 0.2s ease;
   background: rgba(255,255,255,0.08);
@@ -582,9 +591,14 @@
 
 .discussion-text {
   font-size: 15px;
-  line-height: 1.65;
   color: rgba(255,255,255,0.88);
-  white-space: pre-wrap;
+}
+.discussion-line {
+  line-height: 1.65;
+  margin-bottom: 12px;
+}
+.discussion-line:last-child {
+  margin-bottom: 0;
 }
 
 .discussion-loading {

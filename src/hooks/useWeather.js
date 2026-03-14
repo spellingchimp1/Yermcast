@@ -23,9 +23,18 @@ function windDirLabel(degrees) {
 }
 
 async function geocode(query) {
-  // No countrycodes restriction — allow global search
-  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`;
-  const res = await fetch(url, { headers: { 'Accept-Language': 'en' } });
+  const headers = { 'Accept-Language': 'en' };
+  const base = 'https://nominatim.openstreetmap.org';
+
+  // US zip codes: search as postal code in US first to avoid wrong-country matches
+  if (/^\d{5}(-\d{4})?$/.test(query.trim())) {
+    const res = await fetch(`${base}/search?postalcode=${encodeURIComponent(query.trim())}&countrycodes=us&format=json&limit=1`, { headers });
+    const data = await res.json();
+    if (data.length) return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon), display: data[0].display_name };
+  }
+
+  // General search for city names and international locations
+  const res = await fetch(`${base}/search?q=${encodeURIComponent(query)}&format=json&limit=1`, { headers });
   const data = await res.json();
   if (!data.length) throw new Error(`Could not find "${query}". Try a city name or zip code.`);
   return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon), display: data[0].display_name };

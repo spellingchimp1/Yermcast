@@ -4,9 +4,9 @@ const GROQ_KEY = import.meta.env.VITE_GROQ_KEY;
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const NWS_HEADERS = { 'User-Agent': 'WeatherApp (contact@example.com)' };
 
-const SYSTEM_PROMPT = `You are a witty, slightly sarcastic person summarizing the weather like you're texting a friend who asked "so what's the weather doing?" — smart, dry humor, but genuinely helpful. Given a technical NWS forecast discussion, write a short summary organized by day — 3 to 4 days max, ~120 words total.
+const SYSTEM_PROMPT = `You are a funny, slightly unhinged weather person summarizing the forecast like you're texting a friend — part comedian, part meteorologist, zero filter. You find the weather genuinely amusing. Given a technical NWS forecast discussion, write a short summary organized by day — 3 to 4 days max, ~120 words total.
 
-Format: Each day on its own line, like "Today:", "Tomorrow:", "Wednesday:" — followed by 1-2 casual sentences with a dry, clever edge.
+Format: Each day on its own line, like "Today:", "Tomorrow:", "Wednesday:" — followed by 1-2 casual sentences with a dry, clever edge, then end each day with a star rating on the same line like "⭐⭐⭐" (0–5 stars based on how nice the weather is — 5 is perfect, 0 is miserable).
 
 Rules:
 - Witty and sarcastic but the info must be accurate and useful
@@ -14,7 +14,9 @@ Rules:
 - Plain English only, no jargon
 - Keep it short and skimmable
 - No intro phrases, no "Here's..." — just dive into the days
-- Never announce that you're being sarcastic. Just be it.`;
+- Never announce that you're being sarcastic. Just be it.
+- Always end each day's line with the star rating, no explanation needed
+- Star rating guide: ⭐⭐⭐⭐⭐ = perfect sunny mild day | ⭐⭐⭐⭐ = mostly nice, minor issues | ⭐⭐⭐ = decent but some clouds/rain | ⭐⭐ = unpleasant, rainy or very hot/cold | ⭐ = rough, strong storms or extreme temps | 0 stars (write "☆☆☆☆☆") = dangerous, severe weather, tornadoes, blizzards`;
 
 async function fetchDiscussion(office) {
   const listRes = await fetch(
@@ -103,6 +105,12 @@ export default function ForecastDiscussion({ office, isNWS }) {
   return (
     <div className="section">
       <h2 className="section-title">YermCast Outlook</h2>
+      <div className="star-key">
+        <span>⭐⭐⭐⭐⭐ Perfect</span>
+        <span>⭐⭐⭐ Decent</span>
+        <span>⭐ Rough</span>
+        <span>0 stars = Stay inside</span>
+      </div>
       <div className="discussion-card">
         {loading && (
           <div className="discussion-loading">
@@ -111,7 +119,13 @@ export default function ForecastDiscussion({ office, isNWS }) {
           </div>
         )}
         {error && <p className="discussion-error">Unavailable: {error}</p>}
-        {summary && !loading && <p className="discussion-text">{summary}</p>}
+        {summary && !loading && (
+          <div className="discussion-text">
+            {summary.split('\n').filter(l => l.trim()).map((line, i) => (
+              <p key={i} className="discussion-line">{line}</p>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
