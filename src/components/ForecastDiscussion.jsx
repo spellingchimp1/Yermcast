@@ -64,7 +64,7 @@ async function summarize(rawText, locationName, weekly) {
       'Authorization': `Bearer ${GROQ_KEY}`,
     },
     body: JSON.stringify({
-      model: 'llama-3.1-8b-instant',
+      model: 'llama-3.3-70b-versatile',
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: locationHint + forecastData + trimmed },
