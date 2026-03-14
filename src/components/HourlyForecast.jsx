@@ -17,18 +17,18 @@ export default function HourlyForecast({ hourly }) {
           {hourly.map((period, i) => {
             const height = BAR_MIN + ((period.temperature - minT) / range) * (BAR_MAX - BAR_MIN);
             const color = tempColor(period.temperature);
-            const barClass = 'bar';
+            const isNight = period.isDaytime === false;
             return (
               <div className="hour-col" key={i}>
                 <div className="hour-temp">{period.temperature}°</div>
                 <div className="bar-wrap">
                   <div
-                    className={barClass}
-                    style={{ height: `${height}px`, background: color }}
+                    className="bar"
+                    style={{ height: `${height}px`, background: color, opacity: isNight ? 0.55 : 0.9 }}
                   />
                 </div>
                 <div className="hour-label">{formatHour(period.startTime)}</div>
-                <div className="hour-icon">{getWeatherEmoji(period.shortForecast)}</div>
+                <div className="hour-icon">{getWeatherEmoji(period.shortForecast, period.isDaytime !== false)}</div>
               </div>
             );
           })}

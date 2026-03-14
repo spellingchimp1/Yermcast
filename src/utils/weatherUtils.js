@@ -1,4 +1,4 @@
-export function getWeatherEmoji(shortForecast = '') {
+export function getWeatherEmoji(shortForecast = '', isDaytime = true) {
   const f = shortForecast.toLowerCase();
   if (f.includes('thunder') || f.includes('storm')) return '⛈️';
   if (f.includes('snow') || f.includes('blizzard')) return '❄️';
@@ -6,12 +6,13 @@ export function getWeatherEmoji(shortForecast = '') {
   if (f.includes('rain') || f.includes('shower') || f.includes('drizzle')) return '🌧️';
   if (f.includes('fog') || f.includes('mist') || f.includes('haze')) return '🌫️';
   if (f.includes('wind') || f.includes('breezy') || f.includes('blustery')) return '💨';
-  if (f.includes('partly cloudy') || f.includes('mostly sunny') || f.includes('partly sunny')) return '⛅';
   if (f.includes('mostly cloudy') || f.includes('considerable cloud') || f.includes('overcast')) return '☁️';
-  if (f.includes('cloud')) return '🌤️';
-  if (f.includes('clear') || f.includes('sunny')) return '☀️';
-  if (f.includes('night') || f.includes('evening')) return '🌙';
-  return '🌤️';
+  if (f.includes('partly cloudy') || f.includes('mostly sunny') || f.includes('partly sunny')) {
+    return isDaytime ? '⛅' : '🌙';
+  }
+  if (f.includes('cloud')) return isDaytime ? '🌤️' : '☁️';
+  if (f.includes('clear') || f.includes('sunny')) return isDaytime ? '☀️' : '🌙';
+  return isDaytime ? '🌤️' : '🌙';
 }
 
 export function getBgGradient(shortForecast = '', isDaytime = true) {
