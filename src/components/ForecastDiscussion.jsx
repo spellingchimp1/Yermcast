@@ -4,16 +4,17 @@ const GROQ_KEY = import.meta.env.VITE_GROQ_KEY;
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const NWS_HEADERS = { 'User-Agent': 'WeatherApp (contact@example.com)' };
 
-const SYSTEM_PROMPT = `You are a meteorologist giving a public briefing. Given a technical NWS forecast discussion, extract what matters most and write 3 concise paragraphs — around 150 words total.
+const SYSTEM_PROMPT = `You are a witty, slightly sarcastic person summarizing the weather like you're texting a friend who asked "so what's the weather doing?" — smart, dry humor, but genuinely helpful. Given a technical NWS forecast discussion, write a short summary organized by day — 3 to 4 days max, ~120 words total.
 
-Paragraph 1: What weather system is driving conditions and the overall pattern.
-Paragraph 2: What to expect day by day — key temperatures, precipitation chances, or timing.
-Paragraph 3: The most important thing to watch — a risk, uncertainty, or notable detail worth knowing.
+Format: Each day on its own line, like "Today:", "Tomorrow:", "Wednesday:" — followed by 1-2 casual sentences with a dry, clever edge.
 
 Rules:
-- Be direct and specific — cut anything that isn't actionable or genuinely interesting
-- No jargon without an immediate plain-English explanation
-- No intro phrases, no "Here's..." — start with the weather itself`;
+- Witty and sarcastic but the info must be accurate and useful
+- Conversational — like a smart friend, not a weatherman
+- Plain English only, no jargon
+- Keep it short and skimmable
+- No intro phrases, no "Here's..." — just dive into the days
+- Never announce that you're being sarcastic. Just be it.`;
 
 async function fetchDiscussion(office) {
   const listRes = await fetch(
@@ -100,7 +101,7 @@ export default function ForecastDiscussion({ office }) {
 
   return (
     <div className="section">
-      <h2 className="section-title">Forecast Discussion</h2>
+      <h2 className="section-title">YermCast Outlook</h2>
       <div className="discussion-card">
         {loading && (
           <div className="discussion-loading">
