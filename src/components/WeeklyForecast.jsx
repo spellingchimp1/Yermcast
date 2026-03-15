@@ -6,13 +6,16 @@ export default function WeeklyForecast({ weekly }) {
 
   const days = [];
   for (let i = 0; i < weekly.length; i += 2) {
-    const day = weekly[i];
-    const night = weekly[i + 1];
-    if (day) days.push({ day, night });
+    let a = weekly[i];
+    let b = weekly[i + 1];
+    if (!a) continue;
+    // NWS sometimes starts with a night period — ensure day is always the daytime one
+    if (a.isDaytime === false && b?.isDaytime !== false) { [a, b] = [b, a]; }
+    days.push({ day: a, night: b });
   }
 
-  const allHighs = days.map((d) => d.day.temperature);
-  const allLows = days.map((d) => d.night?.temperature ?? d.day.temperature - 15);
+  const allHighs = days.map((d) => d.day?.temperature ?? 0);
+  const allLows = days.map((d) => d.night?.temperature ?? (d.day?.temperature ?? 15) - 15);
   const absMax = Math.max(...allHighs);
   const absMin = Math.min(...allLows);
   const absRange = absMax - absMin || 1;
