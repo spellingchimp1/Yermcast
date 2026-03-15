@@ -408,6 +408,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  flex: 1;
 }
 
 .week-low {
@@ -429,9 +430,9 @@
 
 .week-bar-track {
   flex: 1;
-  height: 5px;
-  border-radius: 3px;
-  background: rgba(255,255,255,0.15);
+  height: 28px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.1);
   position: relative;
   overflow: hidden;
 }
@@ -440,7 +441,7 @@
   position: absolute;
   top: 0;
   height: 100%;
-  border-radius: 3px;
+  border-radius: 14px;
 }
 
 .week-chevron {
